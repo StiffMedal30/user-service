@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250410-insert-admin-user
+      author: Christiaan Dotze
+      context: dev  # Ensure this runs only in the dev environment
+      changes:
+        - insert:
+            tableName: app_user
+            columns:
+              - column:
+                  name: email
+                  value: 'christiaandotze@gmail.com'
+              - column:
+                  name: name
+                  value: 'christiaan'
+              - column:
+                  name: username
+                  value: 'admin'
+              - column:
+                  name: password
+                  value: '$2a$10$orJwRsj4ZMBpnaseYMOEPeT2Vr/6D7.FYVEwcquj8acHremzwdPRa'  # Your bcrypt password hash
+              - column:
+                  name: role
+                  value: 'ADMIN'
+              - column:
+                  name: is_account_non_expired
+                  value: true
+              - column:
+                  name: is_enabled
+                  value: true
+              - column:
+                  name: is_account_non_locked
+                  value: true
+              - column:
+                  name: is_credentials_non_expired
+                  value: true
+              - column:
+                  name: created_at
+                  valueComputed: 'CURRENT_TIMESTAMP'  # Automatically set to current timestamp
+              - column:
+                  name: created_by
+                  value: 'SYSTEM'
+              - column:
+                  name: modified_at
+                  valueComputed: 'CURRENT_TIMESTAMP'  # Set this to current timestamp, it can be updated later
+              - column:
+                  name: modified_by
+                  value: 'SYSTEM'

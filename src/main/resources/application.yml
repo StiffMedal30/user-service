@@ -1,0 +1,15 @@
+server:
+  port: 8082
+
+spring.config.import: "configserver:"  # Pull config from config server
+spring.cloud.config.uri: http://localhost:7090  # Location of config server
+
+spring:
+  application:
+    name: user-service
+
+  liquibase:
+    drop-first: false
+
+  jpa:
+    show-sql: true

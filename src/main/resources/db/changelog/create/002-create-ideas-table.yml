@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250409-idea-table
+      author: Christiaan Dotze
+      changes:
+        - createTable:
+            tableName: ideas  # Ensure this matches the entity name, pluralized (if using plural naming conventions)
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP  # Automatically set the creation timestamp
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP  # Automatically set the modification timestamp
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: admin_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: ideas  # Should be pluralized to match table naming convention
+            baseColumnNames: admin_id
+            referencedTableName: app_user
+            referencedColumnNames: id
+            constraintName: fk_idea_admin
