@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the built jar (make sure you build it first!)
-COPY ./build/libs/authenticator-*.jar app.jar
+COPY ./build/libs/user-service-*.jar app.jar
 
 # Expose the port your app runs on (adjust as needed)
 EXPOSE 8082

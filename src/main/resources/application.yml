@@ -1,15 +1,36 @@
 server:
   port: 8082
 
-spring.config.import: "configserver:"  # Pull config from config server
-spring.cloud.config.uri: http://localhost:7090  # Location of config server
+app:
+  mail:
+    verification-url: http://localhost:8081/api-gateway/api/user/account/activate
+    base-redirect-url: http://localhost:8081/link?t=
 
 spring:
   application:
     name: user-service
 
+  profiles:
+    active: dev
+
+  config:
+    import: "configserver:http://localhost:7090/"  # Pull config from config server
+
+  cloud:
+    config:
+      uri: http://localhost:7090  # Location of config server
+
   liquibase:
-    drop-first: false
+    drop-first: true
 
   jpa:
     show-sql: true
+
+  mail:
+    host: ${EMAIL_HOST}
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: ${EMAIL_SMTP_AUTH}
+      mail.smtp.starttls.enable: ${EMAIL_STARTTLS}

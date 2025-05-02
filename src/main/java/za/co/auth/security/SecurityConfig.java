@@ -29,7 +29,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/login", "/api/user/register", "/api/user/password/reset", "/actuator/**").permitAll()
+                        .requestMatchers(
+                                "/api/user/login",
+                                "/api/user/register",
+                                "/api/user/password/reset",
+                                "/actuator/**",
+                                "/api/link/redirect/**").permitAll()
                         .requestMatchers("/").authenticated()
                         .requestMatchers("/api/*/delete").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -43,7 +48,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return customUserDetailsServiceImpl; // Ensure you're returning your custom UserDetailsService
+        return customUserDetailsServiceImpl;
     }
 
     @Bean
@@ -68,3 +73,4 @@ public class SecurityConfig {
         return provider;
     }
 }
+
