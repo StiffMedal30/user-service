@@ -13,7 +13,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
-                    primaryKeyName: pk_user_id
               - column:
                   name: created_at
                   type: timestamp

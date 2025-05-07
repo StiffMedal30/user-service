@@ -1,20 +1,23 @@
 package za.co.user.service.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import za.co.user.service.entity.AppUserEntity;
+import za.co.user.service.entity.PasswordResetToken;
 import za.co.user.service.records.AppUserRecord;
 import za.co.user.service.records.NewPasswordRecord;
+import za.co.user.service.repository.PasswordResetTokenRepository;
 import za.co.user.service.repository.UserRepository;
 import za.co.user.service.security.JwtProvider;
 import za.co.user.service.service.Mailer;
 import za.co.user.service.service.UserService;
 import za.co.user.service.utilities.Converter;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -22,26 +25,24 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final Mailer mailer;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final PasswordResetTokenServiceImpl passwordResetTokenService;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
-
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder,
-                           UserRepository userRepository,
-                           AuthenticationManager authenticationManager,
-                           JwtProvider jwtProvider,
-                           Mailer mailer) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, JwtProvider jwtProvider,
+                           Mailer mailer, PasswordResetTokenRepository tokenRepository, PasswordResetTokenServiceImpl passwordResetTokenService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.mailer = mailer;
+        this.tokenRepository = tokenRepository;
+        this.passwordResetTokenService = passwordResetTokenService;
     }
 
     @Override
@@ -64,28 +65,35 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         CompletableFuture.runAsync(() ->
-                mailer.sendVerificationEmail(appUserRecord.email(), authenticate(appUserRecord))
+                mailer.sendAcountActivationEmail(appUserRecord.email(), authenticate(appUserRecord))
         );
     }
 
     @Override
-    public void resetPassword(NewPasswordRecord newPasswordRecord) {
+    public void passwordResetRequest(NewPasswordRecord newPasswordRecord) {
         if (!Objects.equals(newPasswordRecord.newPassword(), newPasswordRecord.confirmPassword())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
 
-        AppUserEntity userEntity = Converter.optionalToEntity(userRepository.findByUsernameAndEmail(newPasswordRecord.username(), newPasswordRecord.email()));
+        AppUserEntity userEntity = Converter.optionalToEntity(
+                userRepository.findByUsernameAndEmail(newPasswordRecord.username(), newPasswordRecord.email())
+        );
+
         if (userEntity == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        userEntity.setPassword(passwordEncoder.encode(newPasswordRecord.newPassword()));
-        userEntity.setAccountNonExpired(true);
-        userEntity.setAccountNonLocked(true);
-        userEntity.setCredentialsNonExpired(true);
-        userEntity.setEnabled(true);
-        userRepository.save(userEntity);
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setUser(userEntity);
+        resetToken.setToken(token);
+        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
 
+        tokenRepository.save(resetToken);
+
+        CompletableFuture.runAsync(() ->
+                mailer.sendPasswordResetEmail(newPasswordRecord.email(), token)
+        );
     }
 
     @Override
@@ -116,5 +124,24 @@ public class UserServiceImpl implements UserService {
         AppUserEntity userEntity = Converter.optionalToEntity(user);
         return new AppUserRecord(userEntity.getId(), userEntity.getUsername(), null, userEntity.getEmail(),
                 userEntity.getName(), userEntity.getRole(), null, null);
+    }
+
+    @Override
+    public Boolean confirmPasswordReset(String token) {
+        PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetToken(token);
+        if (passwordResetToken == null) {
+            return false;
+        }
+
+        String email = passwordResetToken.getUser().getEmail();
+        if (email == null) {
+            return false;
+        }
+
+        AppUserEntity userEntity = passwordResetToken.getUser();
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userRepository.save(userEntity);
+        tokenRepository.delete(passwordResetToken);
+        return true;
     }
 }

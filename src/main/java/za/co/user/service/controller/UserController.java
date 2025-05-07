@@ -40,12 +40,11 @@ public class UserController {
     @PostMapping("/password/reset")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody NewPasswordRecord registerRequest) {
         try {
-            userService.resetPassword(registerRequest);
+            userService.passwordResetRequest(registerRequest);
             return ResponseEntity.ok(Map.of("message", "User password reset was done successfully"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
-
     }
 
     @PostMapping("/login")
@@ -53,16 +52,6 @@ public class UserController {
         try {
             String jwt = userService.authenticate(dto);
             return ResponseEntity.ok(new JwtResponseRecord(jwt, dto));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        }
-    }
-
-    @PostMapping("/account/activate")
-    public ResponseEntity<Map<String, String>> activateAccount(@RequestBody Map<String, String> token) {
-        try {
-//            userService.activateAccount(token.get("token"));
-            return ResponseEntity.ok(Map.of("message", "User account was activated successfully"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class MailProperties {
     private String baseRedirectUrl;
-    private String verificationUrl;
+    private String accountActivationUrl;
+    private String resetPasswordUrl;
+    private String activateAccountMessageBody;
+    private String resetPasswordMessageBody;
 }
 

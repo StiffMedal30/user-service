@@ -9,8 +9,6 @@ import java.util.Base64;
 @Service
 public class LinkDecoderServiceImpl implements LinkDecoderService {
 
-    private final String secret = "your-very-secret-key"; // For signing or encryption if needed
-
     @Override
     public String decode(String token) {
         byte[] decodedBytes = Base64.getUrlDecoder().decode(token);

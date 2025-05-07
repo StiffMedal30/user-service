@@ -3,8 +3,27 @@ server:
 
 app:
   mail:
-    verification-url: http://localhost:8081/api-gateway/api/user/account/activate
-    base-redirect-url: http://localhost:8081/link?t=
+    account-activation-url: http://localhost:8081/api-gateway/api/account/activate
+    reset-password-url: http://localhost:8081/api-gateway/api/reset/password
+    base-redirect-url: http://localhost:8081/api/link?t=
+    activate-account-message-body: |
+      <html>
+        <body>
+          <h2>Welcome to NovaFlow!</h2>
+          <p>Thanks for registering. Please click the link below to activate your account:</p>
+          <a href="%s" style="display:inline-block;padding:10px 20px;background-color:#4CAF50;color:white;text-decoration:none;border-radius:5px;">Activate Account</a>
+          <p>If you didn't register, you can safely ignore this email.</p>
+        </body>
+      </html>
+    reset-password-message-body: |
+      <html>
+        <body>
+          <h2>NovaFlow!</h2>
+          <p>Your password has been reset. Please click the link below to confirm that this was you:</p>
+          <a href="%s" style="display:inline-block;padding:10px 20px;background-color:#4CAF50;color:white;text-decoration:none;border-radius:5px;">Confirm Reset</a>
+          <p>If you didn't request a password reset, you can safely ignore this email.</p>
+        </body>
+      </html>
 
 spring:
   application:
@@ -21,7 +40,7 @@ spring:
       uri: http://localhost:7090  # Location of config server
 
   liquibase:
-    drop-first: true
+    drop-first: false
 
   jpa:
     show-sql: true

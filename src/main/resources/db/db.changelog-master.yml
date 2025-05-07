@@ -3,13 +3,11 @@ databaseChangeLog:
   - include:
       file: classpath:/db/changelog/create/001-create-users-table.yml
   - include:
-      file: classpath:/db/changelog/create/002-create-ideas-table.yml
-#  - include:
-#      file: classpath:/db/changelog/create/003-create-idea-collaborator.yml
+      file: classpath:/db/changelog/create/002-password-reset-token.yml
 
 # - CONSTRAINTS YML
-  - include:
-      file: classpath:/db/changelog/constraints/001-add-index-to-ideas.yml
+#  - include:
+#      file: classpath:/db/changelog/constraints/001-add-index-to-ideas.yml
 
 # - UPDATE YML
 

@@ -6,7 +6,7 @@ import za.co.user.service.records.NewPasswordRecord;
 public interface UserService {
     void registerUser(AppUserRecord dto);
 
-    void resetPassword(NewPasswordRecord dto);
+    void passwordResetRequest(NewPasswordRecord dto);
 
     String authenticate(AppUserRecord dto);
 
@@ -15,4 +15,6 @@ public interface UserService {
     void activateUser(AppUserRecord user);
 
     AppUserRecord findUserByEmail(String email);
+
+    Boolean confirmPasswordReset(String token);
 }

@@ -34,7 +34,8 @@ public class SecurityConfig {
                                 "/api/user/register",
                                 "/api/user/password/reset",
                                 "/actuator/**",
-                                "/api/link/redirect/**").permitAll()
+                                "/api/link/redirect/activate",
+                                "/api/link/redirect/reset/password").permitAll()
                         .requestMatchers("/").authenticated()
                         .requestMatchers("/api/*/delete").hasRole("ADMIN")
                         .anyRequest().authenticated()

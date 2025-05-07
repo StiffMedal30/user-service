@@ -26,7 +26,7 @@ public class LinkRedirectController {
     }
 
     @GetMapping("/activate")
-    public ResponseEntity<String> redirect(@RequestParam("t") String token, HttpServletResponse response) throws IOException {
+    public ResponseEntity<String> activateAccount(@RequestParam("t") String token, HttpServletResponse response) throws IOException {
         try {
             // Step 1: Decode and validate the token.
             String email = jwtTokenProvider.getEmailFromToken(token);
@@ -47,6 +47,21 @@ public class LinkRedirectController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Activation failed: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/reset/password")
+    public ResponseEntity<String> resetPassword(@RequestParam("t") String token, HttpServletResponse response) throws IOException {
+        try {
+            Boolean success = userService.confirmPasswordReset(token);
+            if (!success) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password reset failed.");
+            }
+
+            return ResponseEntity.ok("Password reset successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Password reset failed: " + e.getMessage());
         }
     }
 }
