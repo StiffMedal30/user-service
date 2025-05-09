@@ -7,18 +7,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import za.co.user.service.properties.MailProperties;
-import za.co.user.service.service.Mailer;
+import za.co.user.service.service.EmailService;
 
 @Service
 @AllArgsConstructor
-public class MailerImpl implements Mailer {
+public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
     private final MailProperties mailProperties;
     private final LinkDecoderServiceImpl linkDecoderService;
 
     @Override
-    public void sendAcountActivationEmail(String to, String token) {
+    public void sendAccountActivationEmail(String to, String token) {
         String subject = "Verify your NovaFlow account";
         String messageBody = mailProperties.getActivateAccountMessageBody();
         String url = mailProperties.getAccountActivationUrl();
@@ -31,6 +31,14 @@ public class MailerImpl implements Mailer {
         String subject = "Reset your NovaFlow password";
         String messageBody = mailProperties.getResetPasswordMessageBody();
         String url = mailProperties.getResetPasswordUrl();
+        sendEmail(to, token, subject, messageBody, url);
+    }
+
+    @Override
+    public void sendInvitationEmail(String to, String token) {
+        String subject = "NovaFlow account invitation";
+        String messageBody = mailProperties.getInvitationMessageBody();
+        String url = mailProperties.getCollaboratorInviteUrl();
         sendEmail(to, token, subject, messageBody, url);
     }
 

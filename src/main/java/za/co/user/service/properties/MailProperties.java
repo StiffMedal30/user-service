@@ -13,7 +13,9 @@ public class MailProperties {
     private String baseRedirectUrl;
     private String accountActivationUrl;
     private String resetPasswordUrl;
+    private String collaboratorInviteUrl;
     private String activateAccountMessageBody;
     private String resetPasswordMessageBody;
+    private String invitationMessageBody;
 }
 

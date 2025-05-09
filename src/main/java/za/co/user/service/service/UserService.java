@@ -1,5 +1,6 @@
 package za.co.user.service.service;
 
+import za.co.user.service.entity.AppUserEntity;
 import za.co.user.service.records.AppUserRecord;
 import za.co.user.service.records.NewPasswordRecord;
 
@@ -17,4 +18,6 @@ public interface UserService {
     AppUserRecord findUserByEmail(String email);
 
     Boolean confirmPasswordReset(String token);
+
+    AppUserEntity findByUsername(String name);
 }

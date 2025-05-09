@@ -78,3 +78,14 @@ databaseChangeLog:
                   type: boolean
                   constraints:
                     nullable: false
+              - column:
+                  name: admin_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseTableName: app_user
+            baseColumnNames: admin_id
+            referencedTableName: app_user
+            referencedColumnNames: id
+            constraintName: fk_app_user_admin

@@ -10,7 +10,7 @@ import za.co.user.service.records.NewPasswordRecord;
 import za.co.user.service.repository.PasswordResetTokenRepository;
 import za.co.user.service.repository.UserRepository;
 import za.co.user.service.security.JwtProvider;
-import za.co.user.service.service.Mailer;
+import za.co.user.service.service.EmailService;
 import za.co.user.service.service.UserService;
 import za.co.user.service.utilities.Converter;
 
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private final Mailer mailer;
+    private final EmailService emailService;
     private final PasswordResetTokenRepository tokenRepository;
     private final PasswordResetTokenServiceImpl passwordResetTokenService;
 
@@ -36,11 +36,11 @@ public class UserServiceImpl implements UserService {
     private long jwtExpiration;
 
     public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, JwtProvider jwtProvider,
-                           Mailer mailer, PasswordResetTokenRepository tokenRepository, PasswordResetTokenServiceImpl passwordResetTokenService) {
+                           EmailService emailService, PasswordResetTokenRepository tokenRepository, PasswordResetTokenServiceImpl passwordResetTokenService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
-        this.mailer = mailer;
+        this.emailService = emailService;
         this.tokenRepository = tokenRepository;
         this.passwordResetTokenService = passwordResetTokenService;
     }
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         CompletableFuture.runAsync(() ->
-                mailer.sendAcountActivationEmail(appUserRecord.email(), authenticate(appUserRecord))
+                emailService.sendAccountActivationEmail(appUserRecord.email(), authenticate(appUserRecord))
         );
     }
 
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         tokenRepository.save(resetToken);
 
         CompletableFuture.runAsync(() ->
-                mailer.sendPasswordResetEmail(newPasswordRecord.email(), token)
+                emailService.sendPasswordResetEmail(newPasswordRecord.email(), token)
         );
     }
 
@@ -144,4 +144,12 @@ public class UserServiceImpl implements UserService {
         tokenRepository.delete(passwordResetToken);
         return true;
     }
+
+    @Override
+    public AppUserEntity findByUsername(String name) {
+        Optional<AppUserEntity> user = userRepository.findByUsername(name);
+        return Converter.optionalToEntity(user);
+    }
+
+
 }

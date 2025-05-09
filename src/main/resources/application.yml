@@ -5,6 +5,7 @@ app:
   mail:
     account-activation-url: http://localhost:8081/api-gateway/api/account/activate
     reset-password-url: http://localhost:8081/api-gateway/api/reset/password
+    collaborator-invite-url: http://localhost:8081/api-gateway/api/invite/collaborator
     base-redirect-url: http://localhost:8081/api/link?t=
     activate-account-message-body: |
       <html>
@@ -24,6 +25,17 @@ app:
           <p>If you didn't request a password reset, you can safely ignore this email.</p>
         </body>
       </html>
+    invitation-message-body: |
+      <html>
+          <body>
+          <h2>NovaFlow!</h2>
+          <p>You have been invited to join a project. Please click the link below to accept the invitation:</p>
+          <a href="%s" style="display:inline-block;padding:10px 20px;background-color:#4CAF50;color:white;text-decoration:none;border-radius:5px;">Accept Invitation</a>
+          <p>If you are not aware of this, you can safely ignore it.</p>
+          <p>This email will expire in 24 hours</p>
+          </body>
+      </html>
+
 
 spring:
   application:
@@ -40,7 +52,7 @@ spring:
       uri: http://localhost:7090  # Location of config server
 
   liquibase:
-    drop-first: false
+    drop-first: true
 
   jpa:
     show-sql: true
