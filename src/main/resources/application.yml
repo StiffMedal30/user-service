@@ -52,7 +52,7 @@ spring:
       uri: http://localhost:7090  # Location of config server
 
   liquibase:
-    drop-first: true
+    drop-first: false
 
   jpa:
     show-sql: true

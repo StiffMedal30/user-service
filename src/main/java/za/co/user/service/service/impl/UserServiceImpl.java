@@ -99,7 +99,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public String authenticate(AppUserRecord dto) {
         // Generate JWT token after successful authentication
-        return jwtProvider.generateToken(jwtSecret, dto.email()); // Generate token using JWT utility
+        String token = jwtProvider.generateToken(jwtSecret, dto.username());// Generate token using JWT utility
+        System.out.println("Generated token: " + token);
+        return token;
     }
 
     @Override

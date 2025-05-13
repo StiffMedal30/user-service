@@ -10,12 +10,13 @@ import za.co.user.service.records.AppUserRecord;
 import za.co.user.service.records.JwtResponseRecord;
 import za.co.user.service.records.NewPasswordRecord;
 import za.co.user.service.service.UserService;
+import za.co.user.service.service.impl.UserServiceImpl;
 
 import java.util.Map;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/user/")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired

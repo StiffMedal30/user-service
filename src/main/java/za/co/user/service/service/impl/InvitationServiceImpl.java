@@ -30,7 +30,8 @@ public class InvitationServiceImpl implements InvitationService {
 
     @Override
     public void sendInvitation(InviteRequestRecord inviteRequest, Principal principal) {
-        AppUserEntity admin = Converter.optionalToEntity(userRepository.findByUsername(principal.getName()));
+        System.out.println(principal.getName());
+        AppUserEntity admin = Converter.optionalToEntity(userRepository.findByEmail(principal.getName()));
         String token = UUID.randomUUID().toString();
 
         InvitationTokenEntity invitationToken = new InvitationTokenEntity();
